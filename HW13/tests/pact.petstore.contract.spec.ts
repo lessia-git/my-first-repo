@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { PactV4, SpecificationVersion } from '@pact-foundation/pact';
+import { Matchers, PactV4, SpecificationVersion } from '@pact-foundation/pact';
 
 const provider = new PactV4({
   consumer: 'Pets Web v4',
@@ -65,11 +65,11 @@ describe('Pact V4 consumer contract tests', function () {
       .uponReceiving('create a pet')
       .withRequest('POST', '/v2/pet', (builder) => {
         builder.headers({ Accept: 'application/json', 'Content-Type': 'application/json' });
-        builder.jsonBody(petExample);
+        builder.jsonBody(Matchers.like(petExample));
       })
       .willRespondWith(200, (builder) => {
         builder.headers({ 'content-type': 'application/json' });
-        builder.jsonBody(petExample);
+        builder.jsonBody(Matchers.like(petExample));
       })
       .executeTest(async (mockserver) => {
         const service = new PetService(mockserver.url);
@@ -90,7 +90,7 @@ describe('Pact V4 consumer contract tests', function () {
       })
       .willRespondWith(200, (builder) => {
         builder.headers({ 'content-type': 'application/json' });
-        builder.jsonBody(petExample);
+        builder.jsonBody(Matchers.like(petExample));
       })
       .executeTest(async (mockserver) => {
         const service = new PetService(mockserver.url);

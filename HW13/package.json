@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "test": "mocha -r ts-node/register tests/**/*.spec.ts",
+    "test:integration": "mocha -r ts-node/register tests/catapi.integration.spec.ts",
     "test:contract": "mocha -r ts-node/register tests/pact.petstore*.spec.ts",
     "lint": "eslint . --ext .ts"
   },

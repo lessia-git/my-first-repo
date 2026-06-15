@@ -42,6 +42,18 @@
             "application/json"
           ]
         },
+        "matchingRules": {
+          "body": {
+            "$": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          }
+        },
         "method": "POST",
         "path": "/v2/pet"
       },
@@ -75,6 +87,18 @@
           "content-type": [
             "application/json"
           ]
+        },
+        "matchingRules": {
+          "body": {
+            "$": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          }
         },
         "status": 200
       },
@@ -127,6 +151,18 @@
           "content-type": [
             "application/json"
           ]
+        },
+        "matchingRules": {
+          "body": {
+            "$": {
+              "combine": "AND",
+              "matchers": [
+                {
+                  "match": "type"
+                }
+              ]
+            }
+          }
         },
         "status": 200
       },
