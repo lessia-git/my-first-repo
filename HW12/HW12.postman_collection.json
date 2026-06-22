@@ -1,0 +1,482 @@
+{
+  "info": {
+    "_postman_id": "80fe4a2f-6912-4fc5-b1bb-097c66dd991f",
+    "name": "HW12",
+    "description": "### Welcome to Postman! This is your first collection.\n\nCollections are your starting point for building and testing APIs. You can use this one to:\n\n• Group related requests  \n• Test your API in real-world scenarios  \n• Document and share your requests\n\nUpdate the name and overview whenever you’re ready to make it yours.\n\n[Learn more about Postman Collections.](https://learning.postman.com/docs/collections/collections-overview/)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "55587031",
+    "_collection_link": "https://go.postman.co/collection/55587031-80fe4a2f-6912-4fc5-b1bb-097c66dd991f?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Get Status",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status is 200', () => {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "pm.test('Response is a string', () => {",
+              "    pm.expect(pm.response.text()).to.be.a('string');",
+              "});",
+              "pm.test('Contains suggestion path', () => {",
+              "    pm.expect(pm.response.text()).to.include('/random_joke');",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{host}}/",
+          "host": [
+            "{{host}}"
+          ],
+          "path": [
+            ""
+          ]
+        },
+        "description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
+      },
+      "response": []
+    },
+    {
+      "name": "Ping",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status is 200', () => {\r",
+              "    pm.response.to.have.status(200);\r",
+              "});\r",
+              "pm.test('Response body is pong', () => {\r",
+              "    pm.expect(pm.response.text()).to.eql('pong');\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{host}}/ping",
+          "host": [
+            "{{host}}"
+          ],
+          "path": [
+            "ping"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Random_joke",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status is 200', () => {\r",
+              "    pm.response.to.have.status(200);\r",
+              "});\r",
+              "pm.test('Response is JSON object', () => {\r",
+              "    pm.response.to.be.json;\r",
+              "});\r",
+              "pm.test('Has id, type, setup, punchline', () => {\r",
+              "    const json = pm.response.json();\r",
+              "    pm.expect(json).to.have.property('id');\r",
+              "    pm.expect(json).to.have.property('type');\r",
+              "    pm.expect(json).to.have.property('setup');\r",
+              "    pm.expect(json).to.have.property('punchline');\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{host}}/random_joke",
+          "host": [
+            "{{host}}"
+          ],
+          "path": [
+            "random_joke"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Random_ten",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status is 200', () => {\r",
+              "    pm.response.to.have.status(200);\r",
+              "});\r",
+              "pm.test('Response is array of 10 jokes', () => {\r",
+              "    const json = pm.response.json();\r",
+              "    pm.expect(json).to.be.an('array').with.lengthOf(10);\r",
+              "});\r",
+              "pm.test('Each joke has id and type', () => {\r",
+              "    const json = pm.response.json();\r",
+              "    json.forEach(item => {\r",
+              "        pm.expect(item).to.have.property('id');\r",
+              "        pm.expect(item).to.have.property('type');\r",
+              "    });\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{host}}/random_ten",
+          "host": [
+            "{{host}}"
+          ],
+          "path": [
+            "random_ten"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Jokes_random",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status is 200', () => {\r",
+              "    pm.response.to.have.status(200);\r",
+              "});\r",
+              "pm.test('Response matches random_joke shape', () => {\r",
+              "    const json = pm.response.json();\r",
+              "    pm.expect(json).to.have.all.keys('id', 'type', 'setup', 'punchline');\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{host}}/jokes/random",
+          "host": [
+            "{{host}}"
+          ],
+          "path": [
+            "jokes",
+            "random"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Jokes_ten",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status is 200', () => {\r",
+              "    pm.response.to.have.status(200);\r",
+              "});\r",
+              "pm.test('Response is JSON array', () => {\r",
+              "    pm.response.to.be.json;\r",
+              "});\r",
+              "pm.test('Array length is 10', () => {\r",
+              "    const json = pm.response.json();\r",
+              "    pm.expect(json.length).to.eql(10);\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{host}}/jokes/ten",
+          "host": [
+            "{{host}}"
+          ],
+          "path": [
+            "jokes",
+            "ten"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Jokes_random",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status is 200', () => {\r",
+              "    pm.response.to.have.status(200);\r",
+              "});\r",
+              "pm.test('Response is 3 jokes', () => {\r",
+              "    const json = pm.response.json();\r",
+              "    pm.expect(json).to.be.an('array').with.lengthOf(3);\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{host}}/jokes/random/3",
+          "host": [
+            "{{host}}"
+          ],
+          "path": [
+            "jokes",
+            "random",
+            "3"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Jokes_programming_random",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status is 200', () => {\r",
+              "    pm.response.to.have.status(200);\r",
+              "});\r",
+              "pm.test('Response has type programming', () => {\r",
+              "    const json = pm.response.json();\r",
+              "pm.expect(json).to.be.an('array').with.lengthOf(1);\r",
+              "pm.expect(json[0]).to.have.property('type', 'programming');\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{host}}/jokes/programming/random",
+          "host": [
+            "{{host}}"
+          ],
+          "path": [
+            "jokes",
+            "programming",
+            "random"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Jokes_programming_ten",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status is 200', () => {\r",
+              "    pm.response.to.have.status(200);\r",
+              "});\r",
+              "pm.test('Response array length 10', () => {\r",
+              "    const json = pm.response.json();\r",
+              "    pm.expect(json).to.be.an('array').with.lengthOf(10);\r",
+              "});\r",
+              "pm.test('All items have type programming', () => {\r",
+              "    const json = pm.response.json();\r",
+              "    json.forEach(item => pm.expect(item.type).to.eql('programming'));\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{host}}/jokes/programming/ten",
+          "host": [
+            "{{host}}"
+          ],
+          "path": [
+            "jokes",
+            "programming",
+            "ten"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Types",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status is 200', () => {\r",
+              "    pm.response.to.have.status(200);\r",
+              "});\r",
+              "pm.test('Response is array of types', () => {\r",
+              "    const json = pm.response.json();\r",
+              "    pm.expect(json).to.be.an('array');\r",
+              "});\r",
+              "pm.test('Contains at least one known type', () => {\r",
+              "    const json = pm.response.json();\r",
+              "    pm.expect(json).to.include('programming');\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{host}}/types",
+          "host": [
+            "{{host}}"
+          ],
+          "path": [
+            "types"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Error 404",
+      "request": {
+        "method": "GET",
+        "header": []
+      },
+      "response": []
+    },
+    {
+      "name": "Jokes_random_abc",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status is 200 for invalid number path', () => {\r",
+              "    pm.response.to.have.status(200);\r",
+              "});\r",
+              "pm.test('Response text explains invalid number', () => {\r",
+              "    pm.expect(pm.response.text()).to.eql('The passed path is not a number.');\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{host}}/jokes/random/abc ",
+          "host": [
+            "{{host}}"
+          ],
+          "path": [
+            "jokes",
+            "random",
+            "abc "
+          ]
+        }
+      },
+      "response": []
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "host",
+      "value": ""
+    }
+  ]
+}
