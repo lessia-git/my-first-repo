@@ -6,6 +6,8 @@ const CAT_API_KEY = process.env.THE_CAT_API_KEY ?? process.env.CAT_API_KEY ?? 'D
 interface CatImage {
   id: string;
   url: string;
+  width?: number;
+  height?: number;
 }
 
 interface CatApiCreatedResource {
@@ -39,6 +41,10 @@ class CatApiClient {
 
   async searchImages(limit = 1): Promise<CatImage[]> {
     return this.request<CatImage[]>(`/images/search?limit=${limit}`);
+  }
+
+  async getImage(imageId: string): Promise<CatImage> {
+    return this.request<CatImage>(`/images/${encodeURIComponent(imageId)}`);
   }
 
   async createFavourite(imageId: string, subId: string): Promise<CatApiCreatedResource> {
@@ -93,7 +99,15 @@ class CatApiClient {
     });
 
     const body = await response.text();
-    const parsedBody = body ? JSON.parse(body) as unknown : {};
+    let parsedBody: unknown = {};
+
+    if (body) {
+      try {
+        parsedBody = JSON.parse(body) as unknown;
+      } catch {
+        parsedBody = body;
+      }
+    }
 
     if (!response.ok) {
       throw new Error(`CatAPI request failed: ${response.status} ${response.statusText} ${body}`);
@@ -125,13 +139,16 @@ describe('TheCatAPI integration: images, favourites, votes', function () {
     }
   });
 
-  it('uses an image from images/search to create, list and delete a favourite', async () => {
+  it('uses an image from images/search to create, list and delete a favourite, and validates the favourite image by ID', async () => {
     const images = await client.searchImages();
 
     expect(images).to.have.length.greaterThan(0);
     expect(images[0]).to.include.keys(['id', 'url']);
 
     imageId = images[0].id;
+    const referenceImage = await client.getImage(imageId);
+
+    expect(referenceImage).to.include({ id: imageId, url: images[0].url });
 
     const createdFavourite = await client.createFavourite(imageId, subId);
     favouriteId = createdFavourite.id;
@@ -142,10 +159,17 @@ describe('TheCatAPI integration: images, favourites, votes', function () {
     const favourites = await client.listFavourites(subId);
     const favourite = favourites.find((item) => item.id === favouriteId);
 
+    expect(favourite).to.exist;
     expect(favourite).to.include({
       id: favouriteId,
       image_id: imageId,
       sub_id: subId
+    });
+
+    const favouriteImage = favourite?.image ?? (await client.getImage(favourite!.image_id));
+    expect(favouriteImage).to.include({
+      id: referenceImage.id,
+      url: referenceImage.url
     });
 
     const deletedFavourite = await client.deleteFavourite(favouriteId);
@@ -154,13 +178,19 @@ describe('TheCatAPI integration: images, favourites, votes', function () {
     expect(deletedFavourite.message).to.equal('SUCCESS');
   });
 
-  it('uses an image from images/search to create, list and delete a vote', async () => {
+  it('uses an image from images/search to create, list and delete a vote, and verifies the image by ID', async () => {
     const images = await client.searchImages();
 
     expect(images).to.have.length.greaterThan(0);
     expect(images[0]).to.include.keys(['id', 'url']);
 
     imageId = images[0].id;
+    const referenceImage = await client.getImage(imageId);
+
+    expect(referenceImage).to.deep.include({
+      id: imageId,
+      url: images[0].url
+    });
 
     const createdVote = await client.createVote(imageId, subId, 1);
     voteId = createdVote.id;
@@ -171,6 +201,7 @@ describe('TheCatAPI integration: images, favourites, votes', function () {
     const votes = await client.listVotes(subId);
     const vote = votes.find((item) => item.id === voteId);
 
+    expect(vote).to.exist;
     expect(vote).to.include({
       id: voteId,
       image_id: imageId,
@@ -178,9 +209,27 @@ describe('TheCatAPI integration: images, favourites, votes', function () {
       value: 1
     });
 
+    const imageForVote = await client.getImage(vote!.image_id);
+    expect(imageForVote).to.include({
+      id: referenceImage.id,
+      url: referenceImage.url
+    });
+
     const deletedVote = await client.deleteVote(voteId);
     voteId = undefined;
 
     expect(deletedVote.message).to.equal('SUCCESS');
+  });
+
+  it('fails when requesting a non-existent image by ID', async () => {
+    const invalidId = 'non-existent-image-id-1234';
+
+    try {
+      await client.getImage(invalidId);
+      throw new Error('Expected getImage to throw for a missing image ID');
+    } catch (error) {
+      expect(error).to.be.instanceOf(Error);
+      expect((error as Error).message).to.match(/400|404|Bad Request|Not Found|NOT_FOUND|NotFound|Couldn\'t find image/i);
+    }
   });
 });
