@@ -1,0 +1,20 @@
+{
+  "exclude": ["./node_modules/**/*"],
+  "include": ["./tests/**/*", "./playwright.config.ts"],
+  "compileOnSave": false,
+  "compilerOptions": {
+    "noEmit": true,
+    "declaration": false,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "lib": ["DOM", "ES2022"],
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "noFallthroughCasesInSwitch": true,
+    "rootDir": "./",
+    "skipLibCheck": true,
+    "sourceMap": true,
+    "target": "ES2022",
+    "strict": true
+  }
+}
