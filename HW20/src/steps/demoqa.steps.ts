@@ -15,20 +15,27 @@ When('the user fills the Text Box form with:', async function (this: RobotDreams
     for (const row of rows) {
         const field = row['field'];
         const value = row['value'];
-        if (field === 'userName') {
-            await this.page.fill('#userName', value);
-        } else if (field === 'email') {
-            await this.page.fill('#userEmail', value);
-        } else if (field === 'currentAddress') {
-            await this.page.fill('#currentAddress', value);
-        } else if (field === 'permanentAddress') {
-            await this.page.fill('#permanentAddress', value);
+        switch (field) {
+            case 'userName':
+                await this.textBoxPage.fillUserName(value);
+                break;
+            case 'email':
+                await this.textBoxPage.fillEmail(value);
+                break;
+            case 'currentAddress':
+                await this.textBoxPage.fillCurrentAddress(value);
+                break;
+            case 'permanentAddress':
+                await this.textBoxPage.fillPermanentAddress(value);
+                break;
+            default:
+                throw new Error(`Unknown field: ${field}`);
         }
     }
 });
 
 When('the user clicks the submit button', async function (this: RobotDreamsWorld): Promise<void> {
-    await this.page.click('#submit');
+    await this.textBoxPage.clickSubmit();
 });
 
 Then('the output should contain the correct user details:', async function (this: RobotDreamsWorld, data: DataTable): Promise<void> {
@@ -36,14 +43,21 @@ Then('the output should contain the correct user details:', async function (this
     for (const row of rows) {
         const field = row['field'];
         const value = row['value'];
-        if (field === 'userName') {
-            await expect(this.page.locator('#output #name')).toContainText(value);
-        } else if (field === 'email') {
-            await expect(this.page.locator('#output #email')).toContainText(value);
-        } else if (field === 'currentAddress') {
-            await expect(this.page.locator('#output #currentAddress')).toContainText(value);
-        } else if (field === 'permanentAddress') {
-            await expect(this.page.locator('#output #permanentAddress')).toContainText(value);
+        switch (field) {
+            case 'userName':
+                await expect(this.textBoxPage.outputName).toContainText(value);
+                break;
+            case 'email':
+                await expect(this.textBoxPage.outputEmail).toContainText(value);
+                break;
+            case 'currentAddress':
+                await expect(this.textBoxPage.outputCurrentAddress).toContainText(value);
+                break;
+            case 'permanentAddress':
+                await expect(this.textBoxPage.outputPermanentAddress).toContainText(value);
+                break;
+            default:
+                throw new Error(`Unknown field: ${field}`);
         }
     }
 });
@@ -53,30 +67,27 @@ When('the user navigates to the Buttons page', async function (this: RobotDreams
 });
 
 When('the user double clicks the double click button', async function (this: RobotDreamsWorld): Promise<void> {
-    const doubleBtn = this.page.locator('#doubleClickBtn');
-    await doubleBtn.dblclick();
+    await this.buttonsPage.doubleClick();
 });
 
 Then('the double click message {string} should be visible', async function (this: RobotDreamsWorld, expectedMessage: string): Promise<void> {
-    await expect(this.page.locator('#doubleClickMessage')).toHaveText(expectedMessage);
+    await expect(this.buttonsPage.doubleClickMessage).toHaveText(expectedMessage);
 });
 
 When('the user right clicks the right click button', async function (this: RobotDreamsWorld): Promise<void> {
-    const rightBtn = this.page.locator('#rightClickBtn');
-    await rightBtn.click({ button: 'right' });
+    await this.buttonsPage.rightClick();
 });
 
 Then('the right click message {string} should be visible', async function (this: RobotDreamsWorld, expectedMessage: string): Promise<void> {
-    await expect(this.page.locator('#rightClickMessage')).toHaveText(expectedMessage);
+    await expect(this.buttonsPage.rightClickMessage).toHaveText(expectedMessage);
 });
 
 When('the user clicks the dynamic click button', async function (this: RobotDreamsWorld): Promise<void> {
-    const dynamicBtn = this.page.locator('//button[text()="Click Me"]');
-    await dynamicBtn.click();
+    await this.buttonsPage.dynamicClick();
 });
 
 Then('the dynamic click message {string} should be visible', async function (this: RobotDreamsWorld, expectedMessage: string): Promise<void> {
-    await expect(this.page.locator('#dynamicClickMessage')).toHaveText(expectedMessage);
+    await expect(this.buttonsPage.dynamicClickMessage).toHaveText(expectedMessage);
 });
 
 When('the user navigates to the Elements page', async function (this: RobotDreamsWorld): Promise<void> {
@@ -84,5 +95,5 @@ When('the user navigates to the Elements page', async function (this: RobotDream
 });
 
 Then('the elements header message {string} should be visible', async function (this: RobotDreamsWorld, expectedMessage: string): Promise<void> {
-    await expect(this.page.getByText(expectedMessage)).toBeVisible();
+    await expect(this.elementsPage.getHeaderMessage(expectedMessage)).toBeVisible();
 });
