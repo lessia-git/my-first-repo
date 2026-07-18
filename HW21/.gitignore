@@ -1,0 +1,10 @@
+node_modules/
+dist/
+videos/
+reports/
+allure-results/
+allure-report/
+test-results/
+playwright-report/
+.eslintcache
+
