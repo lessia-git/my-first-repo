@@ -1,0 +1,43 @@
+name: HW22 WDIO Tests
+
+on:
+  push:
+    paths:
+      - 'HW22/HW17/**'
+      - '.github/workflows/hw22-wdio.yml'
+  pull_request:
+    paths:
+      - 'HW22/HW17/**'
+      - '.github/workflows/hw22-wdio.yml'
+  workflow_dispatch:
+
+defaults:
+  run:
+    working-directory: HW22/HW17
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    env:
+      CI: 'true'
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: 'HW22/HW17/package-lock.json'
+
+      - name: Install Google Chrome
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y google-chrome-stable
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run WebdriverIO tests
+        run: npm test
