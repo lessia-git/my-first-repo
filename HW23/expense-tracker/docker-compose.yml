@@ -1,0 +1,38 @@
+services:
+  expense-tracker:
+    build: .
+    container_name: expense-tracker
+    ports:
+      - "3000:3000"
+    environment:
+      HOST: "0.0.0.0"
+      CHOKIDAR_USEPOLLING: "true"
+      WATCHPACK_POLLING: "true"
+      BROWSER: "none"
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "node -e \"require('http').get('http://127.0.0.1:3000',r=>process.exit(r.statusCode===200?0:1)).on('error',()=>process.exit(1))\"",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 18
+      start_period: 60s
+
+  cypress:
+    image: cypress/included:13.17.0
+    container_name: expense-tracker-cypress
+    depends_on:
+      expense-tracker:
+        condition: service_healthy
+    environment:
+      CYPRESS_baseUrl: http://expense-tracker:3000
+    working_dir: /e2e
+    volumes:
+      - ./:/e2e
+      - /e2e/node_modules
+    # Default entrypoint of cypress/included is "cypress"
+    entrypoint: ["cypress", "run"]
+    profiles:
+      - test
